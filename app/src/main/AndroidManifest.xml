@@ -11,13 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewYorkRestaurant">
         <activity
-            android:name=".RestaurantListActivity"
+            android:name=".ui.RestaurantListActivity"
             android:exported="false" />
         <activity
-            android:name=".NewYorkActivity"
+            android:name=".ui.NewYorkActivity"
             android:exported="false" />
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.LoginActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

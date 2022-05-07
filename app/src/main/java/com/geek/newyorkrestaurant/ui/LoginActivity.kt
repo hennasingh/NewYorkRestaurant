@@ -1,11 +1,13 @@
-package com.geek.newyorkrestaurant
+package com.geek.newyorkrestaurant.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
+import com.geek.newyorkrestaurant.R
 import com.geek.newyorkrestaurant.databinding.ActivityLoginBinding
+import com.geek.newyorkrestaurant.newYorkApp
 import io.realm.mongodb.Credentials
 import io.realm.mongodb.User
 import timber.log.Timber
@@ -18,7 +20,8 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-      binding = DataBindingUtil.setContentView(this, R.layout.activity_login)
+      binding = ActivityLoginBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         user = newYorkApp.currentUser()
 

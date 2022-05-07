@@ -21,6 +21,7 @@ android {
 
     buildFeatures {
         dataBinding true
+        viewBinding true
     }
 
     realm {
@@ -52,6 +53,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     //Recycler View and Realm Adaptors
+    implementation "io.realm:android-adapters:4.0.0"
     implementation "androidx.recyclerview:recyclerview:1.2.1"
 
     implementation 'com.jakewharton.timber:timber:4.7.1'

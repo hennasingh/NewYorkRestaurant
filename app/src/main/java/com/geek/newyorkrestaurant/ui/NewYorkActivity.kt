@@ -1,4 +1,4 @@
-package com.geek.newyorkrestaurant
+package com.geek.newyorkrestaurant.ui
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -7,11 +7,11 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
-import androidx.core.content.ContentProviderCompat.requireContext
-import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
+import com.geek.newyorkrestaurant.R
 import com.geek.newyorkrestaurant.databinding.ActivityNewyorkBinding
 import com.geek.newyorkrestaurant.model.Restaurant
+import com.geek.newyorkrestaurant.newYorkApp
 import io.realm.Realm
 import io.realm.RealmResults
 import io.realm.kotlin.where
@@ -24,24 +24,25 @@ class NewYorkActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityNewyorkBinding
     private var user: User? = null
+    private lateinit var config: SyncConfiguration
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-       binding = DataBindingUtil.setContentView(this, R.layout.activity_newyork)
+       binding = ActivityNewyorkBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         user = newYorkApp.currentUser()
+
+        config = SyncConfiguration.Builder(user!!, "NewYork").build()
     }
 
     override fun onStart() {
         super.onStart()
-        searchLocations()
-        searchCuisines()
+        searchLocations(config)
+        searchCuisines(config)
     }
 
-    private fun searchCuisines() {
-        val config = SyncConfiguration.Builder(user!!, "NewYork")
-            .waitForInitialRemoteData()
-            .build()
+    private fun searchCuisines(config: SyncConfiguration) {
 
         Timber.d("Opening Realm instance Asynchronously")
         /**
@@ -87,11 +88,7 @@ class NewYorkActivity : AppCompatActivity() {
         })
     }
 
-    private fun searchLocations() {
-
-        val config = SyncConfiguration.Builder(user!!, "NewYork")
-            .waitForInitialRemoteData()
-            .build()
+    private fun searchLocations(config: SyncConfiguration) {
 
         Timber.d("Opening Realm instance Asynchronously")
         /**
