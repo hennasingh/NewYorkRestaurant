@@ -2,6 +2,7 @@ package com.geek.newyorkrestaurant.ui
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import com.geek.newyorkrestaurant.R
 import com.geek.newyorkrestaurant.databinding.ListItemViewBinding
 import com.geek.newyorkrestaurant.model.Restaurant
 

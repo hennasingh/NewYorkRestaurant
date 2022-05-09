@@ -11,6 +11,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.NewYorkRestaurant">
         <activity
+            android:name=".ui.RestaurantDetailActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.RestaurantListActivity"
             android:exported="false" />
         <activity

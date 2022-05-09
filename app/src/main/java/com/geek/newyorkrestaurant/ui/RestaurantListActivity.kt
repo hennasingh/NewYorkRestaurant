@@ -31,7 +31,7 @@ class RestaurantListActivity : AppCompatActivity() {
 
         val extras = intent.getStringExtra("FLAG")
 
-        Timber.d("Setting Realm instance again")
+        Timber.d("Getting Realm config ")
         val config = SyncConfiguration.Builder(newYorkApp.currentUser()!!, "NewYork")
             .build()
 
