@@ -7,6 +7,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.widget.ArrayAdapter
+import androidx.annotation.UiThread
 import androidx.databinding.DataBindingUtil
 import com.geek.newyorkrestaurant.R
 import com.geek.newyorkrestaurant.databinding.ActivityNewyorkBinding
@@ -14,9 +15,11 @@ import com.geek.newyorkrestaurant.model.Restaurant
 import com.geek.newyorkrestaurant.newYorkApp
 import io.realm.Realm
 import io.realm.RealmResults
+import io.realm.kotlin.syncSession
 import io.realm.kotlin.where
 import io.realm.mongodb.User
 import io.realm.mongodb.sync.SyncConfiguration
+import io.realm.mongodb.sync.SyncSession
 import timber.log.Timber
 import java.io.File
 
@@ -33,7 +36,8 @@ class NewYorkActivity : AppCompatActivity() {
 
         user = newYorkApp.currentUser()
 
-        config = SyncConfiguration.Builder(user!!, "NewYork").build()
+        config = SyncConfiguration.Builder(user!!, "NewYork")
+            .build()
     }
 
     override fun onStart() {
@@ -49,6 +53,16 @@ class NewYorkActivity : AppCompatActivity() {
          * Should print false if its opening for the first time
          */
         Timber.d("${File(config.path).exists()}")
+
+//        val realm = Realm.getInstance(config)
+//        Thread {
+//            realm.syncSession.downloadAllServerChanges()
+//            runOnUiThread() {
+//            }
+//        }.start()
+
+//        val allData: RealmResults<Restaurant> = realm.where<Restaurant>().distinct("cuisine").findAll()
+//                displayCuisineDropdown(allData)
 
         Realm.getInstanceAsync(config, object: Realm.Callback() {
             override fun onSuccess(realm: Realm) {

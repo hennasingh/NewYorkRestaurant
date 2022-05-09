@@ -14,8 +14,7 @@ import com.geek.newyorkrestaurant.databinding.ActivityRestaurantDetailBinding
 import com.geek.newyorkrestaurant.model.Restaurant
 import com.geek.newyorkrestaurant.model.Reviews
 import com.geek.newyorkrestaurant.newYorkApp
-import io.realm.Realm
-import io.realm.RealmList
+import io.realm.*
 
 import io.realm.kotlin.where
 import io.realm.mongodb.sync.SyncConfiguration
@@ -100,22 +99,30 @@ class RestaurantDetailActivity : AppCompatActivity() {
                 binding.tvName.text = restaurant?.name
                  stringBuilder.append(restaurant?.address?.building).append(" ").append(restaurant?.address?.street).append(" ").append(restaurant?.address?.zipcode)
                 binding.tvAddress.text = stringBuilder
+                callChangeListener(restaurant)
                 if(restaurant?.reviews?.size==0){
                     binding.tvNoReview.visibility = View.VISIBLE
                     binding.progress.visibility = View.GONE
-                    //setUpEmptyReviewAdapter()
-                }else {
-                    displayReviewAdapter(restaurant)
                 }
             }
         })
 
     }
-//
-//    private fun setUpEmptyReviewAdapter() {
-//        recyclerView.layoutManager = LinearLayoutManager(this@RestaurantDetailActivity)
-//        recyclerView.adapter = ReviewsAdapter(RealmList<Reviews>())
-//    }
+
+    private fun callChangeListener(restaurant: Restaurant?) {
+
+        val listener = OrderedRealmCollectionChangeListener{ collection: RealmList<Reviews>?, changeSet: OrderedCollectionChangeSet? ->
+           for(range in changeSet!!.insertionRanges){
+               if(restaurant?.reviews?.size==0){
+                   binding.tvNoReview.visibility = View.VISIBLE
+                   binding.progress.visibility = View.GONE
+               }else {
+                   displayReviewAdapter(restaurant)
+               }
+           }
+        }
+        restaurant!!.reviews.addChangeListener(listener)
+    }
 
     private fun displayReviewAdapter(restaurant: Restaurant?) {
         adapter = ReviewsAdapter(restaurant!!.reviews)
