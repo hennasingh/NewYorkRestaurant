@@ -72,7 +72,7 @@ class RestaurantDetailActivity : AppCompatActivity() {
             val review = Reviews(
                 review = userReview,
                 userid = newYorkApp.currentUser()!!.id,
-                username = newYorkApp.currentUser()!!.profile.name
+                username = newYorkApp.currentUser()!!.profile.email
             )
             val restaurant =
                 bgRealm.where<Restaurant>().equalTo("restaurant_id", restID).findFirst()
@@ -99,11 +99,15 @@ class RestaurantDetailActivity : AppCompatActivity() {
                 binding.tvName.text = restaurant?.name
                  stringBuilder.append(restaurant?.address?.building).append(" ").append(restaurant?.address?.street).append(" ").append(restaurant?.address?.zipcode)
                 binding.tvAddress.text = stringBuilder
-                callChangeListener(restaurant)
+
                 if(restaurant?.reviews?.size==0){
                     binding.tvNoReview.visibility = View.VISIBLE
                     binding.progress.visibility = View.GONE
+                }else {
+                    displayReviewAdapter(restaurant)
                 }
+                callChangeListener(restaurant)
+
             }
         })
 

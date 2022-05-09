@@ -1,7 +1,11 @@
 package com.geek.newyorkrestaurant.ui
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -74,6 +78,7 @@ class RestaurantListActivity : AppCompatActivity() {
             }
         })
     }
+
 
     private fun updateUI(restaurantList: RealmResults<Restaurant>) {
 

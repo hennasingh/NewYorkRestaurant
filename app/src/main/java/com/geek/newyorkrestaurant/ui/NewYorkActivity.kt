@@ -5,6 +5,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ArrayAdapter
 import androidx.annotation.UiThread
@@ -44,6 +47,30 @@ class NewYorkActivity : AppCompatActivity() {
         super.onStart()
         searchLocations(config)
         searchCuisines(config)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        menuInflater.inflate(R.menu.logout_menu, menu)
+        return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.action_logout -> {
+                user?.logOutAsync {
+                    if (it.isSuccess) {
+                        user = null
+                        startActivity(Intent(this, LoginActivity::class.java))
+                    } else {
+                        Timber.e("log out failed %s ", it.error)
+                    }
+                }
+                true
+            }
+            else -> {
+                super.onOptionsItemSelected(item)
+            }
+        }
     }
 
     private fun searchCuisines(config: SyncConfiguration) {

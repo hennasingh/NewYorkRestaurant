@@ -8,8 +8,11 @@ import androidx.databinding.DataBindingUtil
 import com.geek.newyorkrestaurant.R
 import com.geek.newyorkrestaurant.databinding.ActivityLoginBinding
 import com.geek.newyorkrestaurant.newYorkApp
+import io.realm.Realm
+import io.realm.kotlin.syncSession
 import io.realm.mongodb.Credentials
 import io.realm.mongodb.User
+import io.realm.mongodb.sync.SyncConfiguration
 import timber.log.Timber
 
 class LoginActivity : AppCompatActivity() {
@@ -72,7 +75,13 @@ class LoginActivity : AppCompatActivity() {
                     enableButtons()
                     onLoginFailed(it.error.errorMessage ?: "An error occurred")
                 } else {
-                    startActivity(Intent(this, NewYorkActivity::class.java))
+                    val realm = Realm.getInstance(SyncConfiguration.Builder(newYorkApp.currentUser()!!, "NewYork").build())
+                     Thread {
+                        realm.syncSession.downloadAllServerChanges()
+                        runOnUiThread() {
+                            startActivity(Intent(this, NewYorkActivity::class.java))
+                        }
+                     }.start()
                 }
             }
         }
