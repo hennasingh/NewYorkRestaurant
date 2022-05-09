@@ -15,6 +15,7 @@ import com.geek.newyorkrestaurant.model.Restaurant
 import com.geek.newyorkrestaurant.model.Reviews
 import com.geek.newyorkrestaurant.newYorkApp
 import io.realm.Realm
+import io.realm.RealmList
 
 import io.realm.kotlin.where
 import io.realm.mongodb.sync.SyncConfiguration
@@ -67,23 +68,34 @@ class RestaurantDetailActivity : AppCompatActivity() {
 
     private fun addReviewToDatabase(userReview: String) {
 
-        val review = Reviews(review = userReview, userid = newYorkApp.currentUser()!!.id, username = newYorkApp.currentUser()!!.profile.name)
 
+        reviewRealm.executeTransactionAsync { bgRealm ->
+            val review = Reviews(
+                review = userReview,
+                userid = newYorkApp.currentUser()!!.id,
+                username = newYorkApp.currentUser()!!.profile.name
+            )
+            val restaurant =
+                bgRealm.where<Restaurant>().equalTo("restaurant_id", restID).findFirst()
+            restaurant!!.reviews.add(review)
+
+        }
     }
 
     override fun onStart() {
         super.onStart()
+        stringBuilder.clear()
         getRestDetail(config)
     }
 
     private fun getRestDetail(config: SyncConfiguration) {
 
+        reviewRealm = Realm.getInstance(config)
         Realm.getInstanceAsync(config, object: Realm.Callback() {
             override fun onSuccess(realm: Realm) {
 
               val restaurant = realm.where<Restaurant>()
                     .equalTo("restaurant_id", restID).findFirst()
-                reviewRealm = realm
                 title = restaurant?.name
                 binding.tvName.text = restaurant?.name
                  stringBuilder.append(restaurant?.address?.building).append(" ").append(restaurant?.address?.street).append(" ").append(restaurant?.address?.zipcode)
@@ -91,6 +103,7 @@ class RestaurantDetailActivity : AppCompatActivity() {
                 if(restaurant?.reviews?.size==0){
                     binding.tvNoReview.visibility = View.VISIBLE
                     binding.progress.visibility = View.GONE
+                    //setUpEmptyReviewAdapter()
                 }else {
                     displayReviewAdapter(restaurant)
                 }
@@ -98,6 +111,11 @@ class RestaurantDetailActivity : AppCompatActivity() {
         })
 
     }
+//
+//    private fun setUpEmptyReviewAdapter() {
+//        recyclerView.layoutManager = LinearLayoutManager(this@RestaurantDetailActivity)
+//        recyclerView.adapter = ReviewsAdapter(RealmList<Reviews>())
+//    }
 
     private fun displayReviewAdapter(restaurant: Restaurant?) {
         adapter = ReviewsAdapter(restaurant!!.reviews)
@@ -110,7 +128,6 @@ class RestaurantDetailActivity : AppCompatActivity() {
 
         recyclerView.layoutManager = LinearLayoutManager(this@RestaurantDetailActivity)
         recyclerView.adapter = adapter
-        recyclerView.setHasFixedSize(true)
         recyclerView.addItemDecoration(DividerItemDecoration(this@RestaurantDetailActivity, DividerItemDecoration.VERTICAL))
     }
 
